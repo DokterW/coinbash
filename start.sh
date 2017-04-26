@@ -1,12 +1,13 @@
 #!/bin/bash
-# shETHer v0.1
+# shETHer v0.2
 # Made by Dr. Waldijk
 # A simple script that fetches ETH rate from coinbase.com.
 # Read the README.md for more info, but you will find more info here below.
 # By running this script you agree to the license terms.
 # Config ----------------------------------------------------------------------------
 ETHNAM="shETHer"
-ETHVER="0.1"
+ETHVER="0.2"
+ETHOLD="-"
 # Refresh (in seconds)
 ETHTIM="600"
 # Install dependencies --------------------------------------------------------------
@@ -20,10 +21,13 @@ fi
 # -----------------------------------------------------------------------------------
 clear
 echo "$ETHNAM - v$ETHVER"
+echo ""
 echo "1. USD"
 echo "2. NOK"
 echo "3. SEK"
 echo "4. EUR"
+echo ""
+echo ""
 read -p "Pick currency: " -s -n1 ETHKEY
 case "$ETHKEY" in
     1)
@@ -42,20 +46,37 @@ esac
 clear
 echo "$ETHNAM - v$ETHVER"
 echo ""
+echo ""
 echo "How much ETH"
 echo "do you have?"
 echo ""
+echo ""
+echo ""
 read -p "> " ETHCON
+ETHDEC=$(echo "scale=2; $ETHCON/1" | bc)
 while :; do
     ETHRAT=$(curl -s "https://api.coinbase.com/v2/exchange-rates?currency=ETH" | jq -r ".data.rates.$ETHCUR")
-    ETHVAL=$(echo "scale=2; $ETHRAT*$ETHCON" | bc)
+    ETHVAL=$(echo "scale=2; $ETHRAT*$ETHCON/1" | bc)
+    ETHRATINT=${ETHRAT%.*}
+    ETHOLDINT=${ETHOLD%.*}
+    if [ "$ETHRATINT" -eq "$ETHOLDINT" ]; then
+        ETHIND="-"
+    elif [ "$ETHRATINT" -gt "$ETHOLDINT" ]; then
+        ETHIND="↑"
+    elif [ "$ETHRATINT" -lt "$ETHOLDINT" ]; then
+        ETHIND="↓"
+    fi
     clear
     echo "$ETHNAM - v$ETHVER"
     echo ""
-    echo "Rate: $ETHRAT $ETHCUR"
-    echo " Own: $ETHVAL $ETHCUR"
+    echo " Rate: $ETHRAT $ETHCUR"
+    echo "   $ETHIND   ($ETHOLD)"
+    echo "Coins: $ETHDEC ETH"
+    echo "  Own: $ETHVAL $ETHCUR"
+    echo ""
     echo ""
     read -t $ETHTIM -s -n1 -p "(Q)uit|(U)pdate " ETHKEY
+    ETHOLD=$ETHRAT
     case "$ETHKEY" in
         [qQ])
             echo ""

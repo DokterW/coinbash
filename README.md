@@ -2,14 +2,14 @@
 
 Get the current rate for ETH ([Ethereum](https://www.ethereum.org)) from [Coinbase](https://www.coinbase.com).
 
-It's made to fit in a 16x6 window.
+It's made to fit in a 22x9 window.
 
 ### Roadmap
 
-* Show the previous rate
-* Or, if the rate has gone Up or Down
-* Show how much ETH you have
+*empty*
 
 ### Changelog
 
-*empty*
+#### 2017-04-26
+* Show how much ETH you have
+* Show the previous rate, and if the rate has gone Up, Down or hasn't changed
