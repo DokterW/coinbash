@@ -1,13 +1,14 @@
 #!/bin/bash
-# shETHer v0.2
+# shETHer v0.3
 # Made by Dr. Waldijk
 # A simple script that fetches ETH rate from coinbase.com.
 # Read the README.md for more info, but you will find more info here below.
 # By running this script you agree to the license terms.
 # Config ----------------------------------------------------------------------------
 ETHNAM="shETHer"
-ETHVER="0.2"
+ETHVER="0.3"
 ETHOLD="-"
+ETHIND="-"
 # Refresh (in seconds)
 ETHTIM="600"
 # Install dependencies --------------------------------------------------------------
@@ -57,8 +58,9 @@ ETHDEC=$(echo "scale=2; $ETHCON/1" | bc)
 while :; do
     ETHRAT=$(curl -s "https://api.coinbase.com/v2/exchange-rates?currency=ETH" | jq -r ".data.rates.$ETHCUR")
     ETHVAL=$(echo "scale=2; $ETHRAT*$ETHCON/1" | bc)
-    ETHRATINT=${ETHRAT%.*}
-    ETHOLDINT=${ETHOLD%.*}
+    # Comparisons with decimals doesn't work, so I decided to solve it by removing the decimal separator.
+    ETHRATINT=$(echo "$ETHRAT" | sed 's/\.//g')
+    ETHOLDINT=$(echo "$ETHOLD" | sed 's/\.//g')
     if [ "$ETHRATINT" -eq "$ETHOLDINT" ]; then
         ETHIND="-"
     elif [ "$ETHRATINT" -gt "$ETHOLDINT" ]; then
@@ -70,12 +72,12 @@ while :; do
     echo "$ETHNAM - v$ETHVER"
     echo ""
     echo " Rate: $ETHRAT $ETHCUR"
-    echo "   $ETHIND   ($ETHOLD)"
+    echo "   $ETHIND  ($ETHOLD $ETHCUR)"
+    echo ""
     echo "Coins: $ETHDEC ETH"
     echo "  Own: $ETHVAL $ETHCUR"
     echo ""
-    echo ""
-    read -t $ETHTIM -s -n1 -p "(Q)uit|(U)pdate " ETHKEY
+    read -t $ETHTIM -s -n1 -p "(Q)uit | *key=update " ETHKEY
     ETHOLD=$ETHRAT
     case "$ETHKEY" in
         [qQ])
