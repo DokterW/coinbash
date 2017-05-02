@@ -1,12 +1,12 @@
 #!/bin/bash
-# shETHer v0.3
+# shETHer v0.4
 # Made by Dr. Waldijk
 # A simple script that fetches ETH rate from coinbase.com.
 # Read the README.md for more info, but you will find more info here below.
 # By running this script you agree to the license terms.
 # Config ----------------------------------------------------------------------------
 ETHNAM="shETHer"
-ETHVER="0.3"
+ETHVER="0.4"
 ETHOLD="-"
 ETHIND="-"
 # Refresh (in seconds)
@@ -75,9 +75,9 @@ while :; do
     echo "   $ETHIND  ($ETHOLD $ETHCUR)"
     echo ""
     echo "Coins: $ETHDEC ETH"
-    echo "  Own: $ETHVAL $ETHCUR"
+    echo "  Xch: $ETHVAL $ETHCUR"
     echo ""
-    read -t $ETHTIM -s -n1 -p "(Q)uit | *key=update " ETHKEY
+    read -t $ETHTIM -s -n1 -p "(Q)uit (*)refresh " ETHKEY
     ETHOLD=$ETHRAT
     case "$ETHKEY" in
         [qQ])
