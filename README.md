@@ -4,10 +4,14 @@ Get the current rate for BTC, ETH & LTC from [Coinbase](https://www.coinbase.com
 
 ### Roadmap
 
-* Coins will be saved to file instead of memory.
-* Improved menu system.
+* Reinstate indicator if the currency rate has gone up, down or is unchanged since last fetch.
 
 ### Changelog
+
+#### 2017-05-08
+* Less variables by using a arrays.
+* Coins are saved in a CSV file.
+* Improved menu based on updates above.
 
 #### 2017-05-07
 * Changed the name from shETHer to coinbash as I will be including all three currencies from Coinbase -- BTC, ETH & LTC.

@@ -1,15 +1,28 @@
 #!/bin/bash
-# coinbash v0.6
+# coinbash v0.7
 # Made by Dr. Waldijk
 # A simple script that fetches BTC, ETH  & LTC currency rate from coinbase.com.
 # Read the README.md for more info, but you will find more info here below.
 # By running this script you agree to the license terms.
 # Config ----------------------------------------------------------------------------
 CIBNAM="coinbash"
-CIBVER="0.6"
+CIBVER="0.7"
 CIBLOC="$HOME/.dokter/coinbash"
-CIBOLD="0"
-CIBIND="-"
+CIBOLD[1]="0"
+CIBIND[1]="-"
+CIBOLD[2]="0"
+CIBIND[2]="-"
+CIBOLD[3]="0"
+CIBIND[3]="-"
+CIBCCR[1]="BTC"
+CIBCCR[2]="ETH"
+CIBCCR[3]="LTC"
+ if [ ! -e $CIBLOC/coins.csv ]; then
+    wget  -q -N --show-progress https://raw.githubusercontent.com/DokterW/$CIBNAM/master/coins.csv -P $CIBLOC/
+    CIBCSV=$(cat $CIBLOC/coins.csv)
+ else
+    CIBCSV=$(cat $CIBLOC/coins.csv)
+ fi
 # Refresh (in seconds)
 CIBTIM="600"
 # Install dependencies --------------------------------------------------------------
@@ -45,58 +58,85 @@ case "$CIBKEY" in
         CIBCUR="EUR"
     ;;
 esac
-clear
-echo "$CIBNAM - v$CIBVER"
-echo ""
-echo ""
-echo "How much do you have?"
-echo ""
-read -p "BTC: " CIBCONBTC
-CIBDECBTC=$(echo "scale=2; $CIBCONBTC/1" | bc)
-read -p "ETH: " CIBCONETH
-CIBDECETH=$(echo "scale=2; $CIBCONETH/1" | bc)
-read -p "LTC: " CIBCONLTC
-CIBDECLTC=$(echo "scale=2; $CIBCONLTC/1" | bc)
 while :; do
-    # BTC
-    CIBRATBTC=$(curl -s "https://api.coinbase.com/v2/exchange-rates?currency=BTC" | jq -r ".data.rates.$CIBCUR")
-    CIBVALBTC=$(echo "scale=2; $CIBRATBTC*$CIBCONBTC/1" | bc)
-    # ETH
-    CIBRATETH=$(curl -s "https://api.coinbase.com/v2/exchange-rates?currency=ETH" | jq -r ".data.rates.$CIBCUR")
-    CIBVALETH=$(echo "scale=2; $CIBRATETH*$CIBCONETH/1" | bc)
-    # Comparisons with decimals doesn't work, so I decided to solve it by removing the decimal separator.
-#    CIBRATETHINT=$(echo "$CIBRATETH" | sed 's/\.//g')
-#    CIBOLDINT=$(echo "$CIBOLD" | sed 's/\.//g')
-#    if [ "$CIBOLDINT" -eq "0" ]; then
-#        CIBIND="-"
-#        CIBOLD="-"
-#    elif [ "$CIBRATETHINT" -eq "$CIBOLDINT" ]; then
-#        CIBIND="-"
-#    elif [ "$CIBRATETHINT" -gt "$CIBOLDINT" ]; then
-#        CIBIND="↑"
-#    elif [ "$CIBRATETHINT" -lt "$CIBOLDINT" ]; then
-#        CIBIND="↓"
-#    fi
-    # LTC
-    CIBRATLTC=$(curl -s "https://api.coinbase.com/v2/exchange-rates?currency=LTC" | jq -r ".data.rates.$CIBCUR")
-    CIBVALLTC=$(echo "scale=2; $CIBRATLTC*$CIBCONLTC/1" | bc)
     clear
     echo "$CIBNAM - v$CIBVER"
     echo ""
-    echo "  BTC: $CIBRATBTC $CIBCUR"
-    echo "  ETH: $CIBRATETH $CIBCUR"
-#    echo "   $CIBIND  ($CIBOLD $CIBCUR)"
-    echo "  LTC: $CIBRATLTC $CIBCUR"
+    echo -n "1. "
+    echo "$CIBCSV" | cut -d , -f 1
+    echo -n "2. "
+    echo "$CIBCSV" | cut -d , -f 2
+    echo -n "3. "
+    echo "$CIBCSV" | cut -d , -f 3
+    echo "0. Continue"
     echo ""
-    echo "Coins: $CIBDECBTC BTC"
-    echo "       $CIBVALBTC $CIBCUR"
-    echo "Coins: $CIBDECETH ETH"
-    echo "       $CIBVALETH $CIBCUR"
-    echo "Coins: $CIBDECLTC LTC"
-    echo "       $CIBVALLTC $CIBCUR"
+    read -p "Enter option: " -s -n1 CIBKEY
+    case "$CIBKEY" in
+        1)
+            clear
+            echo "$CIBNAM - v$CIBVER"
+            echo ""
+            read -p "Enter new amount: " CIBKEY
+            CIBCSV=$(echo "$CIBCSV" | sed "1s/.*\(,.*,.*\)/$CIBKEY\1")
+            echo "$CIBCSV" > $CIBLOC/coins.csv
+        ;;
+        2)
+            clear
+            echo "$CIBNAM - v$CIBVER"
+            echo ""
+            read -p "Enter new amount: " CIBKEY
+            CIBCSV=$(echo "$CIBCSV" | sed "1s/\(.*,\).*\(,.*\)/\1$CIBKEY\2/")
+            echo "$CIBCSV" > $CIBLOC/coins.csv
+        ;;
+        3)
+            clear
+            echo "$CIBNAM - v$CIBVER"
+            echo ""
+            read -p "Enter new amount: " CIBKEY
+            CIBCSV=$(echo "$CIBCSV" | sed "1s/\(.*,.*,\).*/\1$CIBKEY/")
+            echo "$CIBCSV" > $CIBLOC/coins.csv
+        ;;
+        0)
+            break
+        ;;
+    esac
+done
+while :; do
+    CIBCNT=0
+    until [ "$CIBCNT" -eq "3" ]; do
+        CIBCNT=$(expr $CIBCNT + 1)
+        CIBCON[$CIBCNT]=$(echo "$CIBCSV" | cut -d , -f $CIBCNT)
+        CIBDEC[$CIBCNT]=$(echo "scale=2; ${CIBCON[$CIBCNT]}/1" | bc)
+        CIBRAT[$CIBCNT]=$(curl -s "https://api.coinbase.com/v2/exchange-rates?currency=${CIBCCR[$CIBCNT]}" | jq -r ".data.rates.$CIBCUR")
+        CIBVAL[$CIBCNT]=$(echo "scale=2; ${CIBRAT[$CIBCNT]}*${CIBCON[$CIBCNT]}/1" | bc)
+    done
+    clear
+    echo "$CIBNAM - v$CIBVER"
     echo ""
+    CIBCNT=0
+    until [ "$CIBCNT" -eq "3" ]; do
+        CIBCNT=$(expr $CIBCNT + 1)
+        # Comparisons with decimals doesn't work, so I decided to solve it by removing the decimal separator.
+        CIBRATINT[$CIBCNT]=$(echo "${CIBRAT[$CIBCNT]}" | sed 's/\.//g')
+        CIBOLDINT[$CIBCNT]=$(echo "${CIBOLD[$CIBCNT]}" | sed 's/\.//g')
+        if [ "${CIBOLDINT[$CIBCNT]}" -eq "0" ]; then
+            CIBIND="-"
+            CIBOLD="-"
+        elif [ "${CIBRATINT[$CIBCNT]}" -eq "${CIBOLDINT[$CIBCNT]}" ]; then
+            CIBIND="-"
+        elif [ "${CIBRATINT[$CIBCNT]}" -gt "${CIBOLDINT[$CIBCNT]}" ]; then
+            CIBIND="↑"
+        elif [ "${CIBRATINT[$CIBCNT]}" -lt "${CIBOLDINT[$CIBCNT]}" ]; then
+            CIBIND="↓"
+        fi
+        echo "  ${CIBCCR[$CIBCNT]}: ${CIBRAT[$CIBCNT]} $CIBCUR"
+        echo "   ${CIBIND[$CIBCNT]}  (${CIBOLD[$CIBCNT]} $CIBCUR)"
+        echo "Coins: ${CIBDEC[$CIBCNT]} ${CIBCCR[$CIBCNT]}"
+        echo "       ${CIBVAL[$CIBCNT]} $CIBCUR"
+        echo ""
+        CIBOLD[$CIBCNT]=${CIBRAT[$CIBCNT]}
+    done
     read -t $CIBTIM -s -n1 -p "(Q)uit (*)refresh " CIBKEY
-    CIBOLD=$CIBRATETH
     case "$CIBKEY" in
         [qQ])
             echo ""
