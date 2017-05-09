@@ -1,12 +1,12 @@
 #!/bin/bash
-# coinbash v0.8
+# coinbash v0.9
 # Made by Dr. Waldijk
 # A simple script that fetches BTC, ETH  & LTC currency rate from coinbase.com.
 # Read the README.md for more info, but you will find more info here below.
 # By running this script you agree to the license terms.
 # Config ----------------------------------------------------------------------------
 CIBNAM="coinbash"
-CIBVER="0.8"
+CIBVER="0.9"
 CIBLOC="$HOME/.dokter/coinbash"
 CIBOLD[1]="0"
 CIBIND[1]="-"
@@ -63,11 +63,11 @@ while :; do
     echo "$CIBNAM - v$CIBVER"
     echo ""
     echo -n "1. "
-    echo "$CIBCSV" | cut -d , -f 1 | sed 's/(.*)/\1 BTC/'
+    echo "$CIBCSV" | cut -d , -f 1 | sed 's/\(.*\)/\1 BTC/'
     echo -n "2. "
-    echo "$CIBCSV" | cut -d , -f 2 | sed 's/(.*)/\1 ETH/'
+    echo "$CIBCSV" | cut -d , -f 2 | sed 's/\(.*\)/\1 ETH/'
     echo -n "3. "
-    echo "$CIBCSV" | cut -d , -f 3 | sed 's/(.*)/\1 LTC/'
+    echo "$CIBCSV" | cut -d , -f 3 | sed 's/\(.*\)/\1 LTC/'
     echo "0. Continue"
     echo ""
     read -p "Enter option: " -s -n1 CIBKEY
