@@ -8,6 +8,11 @@ Get the current rate for BTC, ETH & LTC from [Coinbase](https://www.coinbase.com
 
 ### Changelog
 
+#### 2017-05-09
+* Fixed a bug that if you changed/updated your BTC amount it emptied coins.csv.
+* In the menu to edit and view the coins.csv I added crypto currency identifier.
+* Fixed the indicator, so it works now as intended.
+
 #### 2017-05-08
 * Less variables by using a arrays.
 * Coins are saved in a CSV file.
