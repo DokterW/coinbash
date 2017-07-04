@@ -8,6 +8,9 @@ Get the current rate for BTC, ETH & LTC from [Coinbase](https://www.coinbase.com
 
 ### Changelog
 
+#### 2017-07-04
+* If the API returns null when asking for exchange rate, it will default to zero (only a temporary solution).
+
 #### 2017-05-09
 * Fixed a bug that if you changed/updated your BTC amount it emptied coins.csv.
 * In the menu to edit and view the coins.csv I added crypto currency identifier.

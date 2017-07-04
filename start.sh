@@ -1,12 +1,12 @@
 #!/bin/bash
-# coinbash v0.9
+# coinbash v0.10
 # Made by Dr. Waldijk
 # A simple script that fetches BTC, ETH  & LTC currency rate from coinbase.com.
 # Read the README.md for more info, but you will find more info here below.
 # By running this script you agree to the license terms.
 # Config ----------------------------------------------------------------------------
 CIBNAM="coinbash"
-CIBVER="0.9"
+CIBVER="0.10"
 CIBLOC="$HOME/.dokter/coinbash"
 CIBOLD[1]="0"
 CIBIND[1]="-"
@@ -108,6 +108,9 @@ while :; do
         CIBCON[$CIBCNT]=$(echo "$CIBCSV" | cut -d , -f $CIBCNT)
         CIBDEC[$CIBCNT]=$(echo "scale=2; ${CIBCON[$CIBCNT]}/1" | bc)
         CIBRAT[$CIBCNT]=$(curl -s "https://api.coinbase.com/v2/exchange-rates?currency=${CIBCCR[$CIBCNT]}" | jq -r ".data.rates.$CIBCUR")
+        if [ "${CIBRAT[$CIBCNT]}" = "null" ]; then
+            CIBRAT[$CIBCNT]="0"
+        fi
         CIBVAL[$CIBCNT]=$(echo "scale=2; ${CIBRAT[$CIBCNT]}*${CIBCON[$CIBCNT]}/1" | bc)
     done
     clear
