@@ -1,12 +1,12 @@
 #!/bin/bash
-# coinbash v0.10
+# coinbash v0.11
 # Made by Dr. Waldijk
 # A simple script that fetches BTC, ETH  & LTC currency rate from coinbase.com.
 # Read the README.md for more info, but you will find more info here below.
 # By running this script you agree to the license terms.
 # Config ----------------------------------------------------------------------------
 CIBNAM="coinbash"
-CIBVER="0.10"
+CIBVER="0.11"
 CIBLOC="$HOME/.dokter/coinbash"
 CIBOLD[1]="0"
 CIBIND[1]="-"
@@ -34,30 +34,36 @@ elif [ ! -e /usr/bin/jq ]; then
     sudo dnf -y install jq
 fi
 # -----------------------------------------------------------------------------------
-clear
-echo "$CIBNAM - v$CIBVER"
-echo ""
-echo "1. USD"
-echo "2. NOK"
-echo "3. SEK"
-echo "4. EUR"
-echo ""
-echo ""
-read -p "Pick currency: " -s -n1 CIBKEY
-case "$CIBKEY" in
-    1)
-        CIBCUR="USD"
-    ;;
-    2)
-        CIBCUR="NOK"
-    ;;
-    3)
-        CIBCUR="SEK"
-    ;;
-    4)
-        CIBCUR="EUR"
-    ;;
-esac
+while :; do
+    clear
+    echo "$CIBNAM - v$CIBVER"
+    echo ""
+    echo "1. USD"
+    echo "2. NOK"
+    echo "3. SEK"
+    echo "4. EUR"
+    echo ""
+    echo ""
+    read -p "Pick currency: " -s -n1 CIBKEY
+    case "$CIBKEY" in
+        1)
+            CIBCUR="USD"
+            break
+        ;;
+        2)
+            CIBCUR="NOK"
+            break
+        ;;
+        3)
+            CIBCUR="SEK"
+            break
+        ;;
+        4)
+            CIBCUR="EUR"
+            break
+        ;;
+    esac
+done
 while :; do
     clear
     echo "$CIBNAM - v$CIBVER"
